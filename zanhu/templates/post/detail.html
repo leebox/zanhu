@@ -1,0 +1,55 @@
+{% extends '../base.html' %}
+{% load thumbnail %}
+
+{% block content %}
+<main role="main" class="container pt-2">
+    <div class="row mt-3 mb-5">
+        <div class="col-9">
+            <div class="bg-white rounded shadow-sm">
+                <div class="card-body">
+                    <h3>{{ object.title }}</h3>
+                    <span class="text-muted small">
+                        {{ object.created }} 阅读
+                        {{ cache_view_num }}
+                        {% if object.author == request.user %}
+                            <a href="{% url "post:update_post" object.pk %}">更改内容</a>
+                        {% endif %}
+                    </span>
+
+                    <div class="pt-5">
+                        {{ object.content | safe }}
+                    </div>
+                </div>
+            </div>
+            {# 评论版块 #}
+            <div class="bg-white rounded shadow-sm mt-3">
+
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-3">
+            <div class="card border-0">
+                <div class="card-header bg-white">
+                    关于作者
+                </div>
+                <div class="media p-3">
+                    {% thumbnail post.author.picture "48x48" crop="center" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="rounded-circle">
+                    {% endthumbnail %}
+                    <div class="media-body ml-3">
+                         <h5 class="">{{ post.author }}</h5>
+                        <div class="small text-muted">Lead Developer</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</main>
+
+
+{% endblock %}

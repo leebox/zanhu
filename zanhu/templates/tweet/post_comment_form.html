@@ -1,0 +1,13 @@
+    <form class="" id="postNewCommentForm" action="#">
+          <div class="form-group">
+            <label for="postNewCommentLabel" class="small">发表你评论</label>
+              {% csrf_token %}
+              <input type="text" class="form-control" name="parent_id" id="parentIdInput"  style="display: none">
+              <input type="text" class="form-control" name="reply"  value="True" style="display: none">
+            <textarea class="form-control" name="content" id="postNewCommentContent" rows="2"></textarea>
+          </div>
+    </form>
+    <div class="text-right">
+       <button id="postNewCommentBtn" type="button" class="btn btn-sm btn-primary small">立即发表</button>
+    </div>
+

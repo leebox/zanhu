@@ -1,0 +1,33 @@
+/*解决html页面展开内容出现滚动条时抖动问题 */
+html {
+  overflow-y: scroll;
+}
+:root {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+:root body {
+  position: absolute;
+}
+body {
+  width: 100vw;
+  overflow: hidden;
+}
+/*导航条 */
+.nav-underline .nav-link:hover {
+  color: #23272b;
+}
+
+.nav-underline .active {
+  font-weight: 500;
+  color: #343a40;
+}
+
+/* offcanvas end */
+.navbar-avatar {
+    height: 2.4rem;
+    width: 2.4rem;
+}
+
+
+/*card*/

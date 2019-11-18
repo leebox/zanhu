@@ -1,0 +1,22 @@
+
+<!-- Modal -->
+<div class="modal fade" id="deleteTweetModal" tabindex="-1" role="dialog" aria-labelledby="deleteTweetModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteTweetModalTitle">确定删除此条动态吗？</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+          <form id="deleteTweetForm"  method="post" style="display: none">
+            {% csrf_token %}
+          </form>
+        {{ pk }}
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+        <button type="button" id="postDeleteTweetBtn" class="btn btn-primary btn-danger">确认</button>
+      </div>
+    </div>
+  </div>
+</div>

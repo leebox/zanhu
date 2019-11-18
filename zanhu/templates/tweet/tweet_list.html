@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+<main role="main" class="container pt-2">
+    <div class="row pt-4">
+        <div class="col-8">
+            <div class="card rounded border">
+              <div class="card-header bg-white">
+                最新动态
+              </div>
+                <div class="card-body h-100" id="tweet_stream">
+                        {% for tweet in tweet_list %}
+                            <div id="{{ tweet.pk }}" class="">
+                                {% include "tweet/single_tweet.html" with tweet=tweet %}
+                            </div>
+                        {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4">
+             {% include "tweet/post_tweet_form.html" %}
+            <div class="bg-white shadow-sm p-3 mt-3">
+            </div>
+        </div>
+    </div>
+</main>
+
+    {% include "tweet/delete_tweet_form.html" %}
+
+{% endblock %}
+
+
+
+

@@ -1,0 +1,27 @@
+{% load humanize %}
+     {% for comment in current_comments %}
+         <div id="{{ comment.pk }}" >
+                 <div class="media">
+                    <a class="" href="#">
+                        <img src="static/img/default.jpg" width="36" height="36" class="rounded mr-2 mt-1">
+                    </a>
+                    <div class="media-body ml-1">
+                        <small class="float-right text-navy">{{ comment.created_at|naturaltime }}</small>
+                        <p class="mb-2"><strong>{{ comment.user.username }}</strong></p>
+                        <p>
+                            {{ comment.content }}
+                        </p>
+
+                    </div>
+                </div>
+                 <div class="media ml-5">
+                        <!--显示点赞按钮-->
+                        <button type="button" id="likeTweetBtn" class="btn btn-light btn-sm mr-2">
+                            <span class="iconfont">&#xe698; {{ comment.liked_user.count }}</span>
+                        </button><br>
+                 </div>
+         </div>
+         <hr>
+    {% endfor %}
+
+

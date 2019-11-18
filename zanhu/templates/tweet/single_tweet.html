@@ -1,0 +1,74 @@
+{% load humanize %}
+{% load thumbnail %}
+
+<div class="media">
+    {% if tweet.user.picture %}
+        {% thumbnail tweet.user.picture "56x56" crop="center" as im %}
+            <img class="rounded-circle mr-3" src="{{ im.url }}"
+                 width="{{ im.width }}" height="{{ im.height }}">
+        {% endthumbnail %}
+    {% else %}
+        <img class="rounded-circle mr-3"
+             src="/media/profile_pics/default.jpg"  width="56" height="56">
+    {% endif %}
+    <div class="media-body">
+            <small class="float-right text-navy">{{ tweet.created_at|naturaltime }}</small>
+            <p class="mb-2"><strong>{{ tweet.user.username }}</strong></p>
+            <p>
+                {{ tweet.content }}
+            </p>
+    </div>
+</div>
+<div class="media ml-5">
+    <!--显示点赞按钮-->
+    <button type="button" id="likeTweetBtn" class="btn btn-light btn-sm mr-2 ml-4">
+        <span class="iconfont text-muted">&#xe698;  {{ tweet.liked_user.count }}</span>
+    </button><br>
+    <!--显示评论按钮-->
+  <button class="btn btn-light btn-sm mr-2" id="commentTweetBtn" type="button" data-toggle="collapse" data-target="#collapse-{{ tweet.pk }}"
+          aria-expanded="false" aria-controls="collapse-{{ tweet.pk }}">
+      {% if tweet.comment_count != 0 %}
+          <span class="iconfont text-muted">&#xea5a; {{ tweet.comment_count }}条评论</span>
+      {% else %}
+          <span class="iconfont text-muted">&#xea5a; 评论</span>
+      {% endif %}
+  </button>
+    <!--自己发送的动态显示删除按钮-->
+    {% if request.user.username == tweet.user.username %}
+        <!-- Button trigger modal -->
+            <button id="deleteTweetBtn" type="button" role="button" class="btn btn-light btn-sm mr-2"
+                    data-toggle="modal" data-target="#deleteTweetModal">
+              <span class="iconfont text-muted">&#xe879; X</span>
+            </button><br>
+    {% endif %}
+</div>
+
+<div class="collapse shadow-sm rounded border mt-3 p-3" id="collapse-{{ tweet.pk }}" >
+         <!--下来加载进度条-->
+        <div class="loading">
+            <img src="static/img/loading.gif">
+        </div>
+
+        <!--评论列表-->
+        <div class="comment-list">
+        {% include 'tweet/single_comment.html' %}
+        </div>
+
+        <!--发布评论表单-->
+        <form class="" id="postNewCommentForm" action="#">
+              <div class="form-group">
+                <label for="postNewCommentLabel" class="small">发表你评论</label>
+                  {% csrf_token %}
+                  <input type="text" class="form-control" name="parent_id" id="parentIdInput" value="{{ tweet.pk }}"
+                         style="display: none">
+                <textarea class="form-control" name="content" id="postNewCommentContent" rows="2" required></textarea>
+              </div>
+                    <div class="text-right">
+                       <button id="postNewCommentBtn" type="button" class="btn btn-sm btn-primary small">立即发表</button>
+                    </div>
+        </form>
+
+
+
+</div>
+<hr>

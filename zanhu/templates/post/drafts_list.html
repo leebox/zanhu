@@ -1,0 +1,143 @@
+{% load static %}
+{% load thumbnail %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>草稿 - {{ user.username }} - 赞乎</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/iconfont.css' %}">
+    </head>
+
+    <body class="bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm bg-light nav-underline">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'tweet:index_page' %}">赞 乎</a>
+                <div class="text-right">
+                    <a class="btn btn-secondary btn-sm mr-3 " href="{% url 'post:add_post' %}" >写文章</a>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                    <ul class="navbar-nav ml-auto mt-2 mt-lg-0 order-md-2">
+                      <li class="nav-item d-flex align-items-center">
+                          <a href="" class="" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img class="navbar-avatar  rounded-circle" src="{% static 'img/default.jpg' %}" />
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right mr-5 shadow-sm border-0" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'post:add_post' %}">发表文章</a>
+                                <a class="dropdown-item" href="{% url 'post:draft_list' %}">草稿箱</a>
+                                <a class="dropdown-item" href="{% url 'user:detail_page' user.username %}">个人主页</a>
+                                <a class="dropdown-item" href="{% url 'user:setting_page' user.username %}">账号设置</a>
+                                <a class="dropdown-item" href="{% url 'account_logout' %}">登出</a>
+                            </div>
+                      </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row mt-5 justify-content-md-center pb-3 mb-5">
+                <div class="card border-0 p-4">
+                    <h6 class="text-primary font-weight-bold">草稿 ({{ draft_post_list.count }}) </h6>
+                    {% for draft in draft_post_list %}
+                        <hr>
+                        <div class="draft">
+                            <h6 class="mb-3"><a href="#" class="text-body">{{ draft.title }}</a></h6>
+                            <span class="text-muted small">{{ draft.created }}</span>
+                        <!-- Example split danger button -->
+                              <button type="button" class="btn btn-sm dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropdown</span>
+                              </button>
+                              <div class="dropdown-menu small" style="min-width: auto;">
+                                <a class="dropdown-item small" href="{% url 'post:update_post' draft.pk %}">编辑</a>
+                                <a class="dropdown-item small del" data-toggle="modal"
+                                   id='{{ draft.pk }}' data-target="#exampleModal" href="#">删除</a>
+                              </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {#  delte modal 删除草稿      #}
+        <div class="modal" tabindex="-1" role="dialog" id="exampleModal"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">删除草稿</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>删除后不可恢复，确认删除此草稿吗？</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" id="deleteDraftBtn" class="btn btn-danger">确认</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+        <script src="{% static 'js/popper.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.min.js' %}" ></script>
+        <script>
+            $(function () {
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = cookies[i].trim();
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                var csrftoken = getCookie('csrftoken');
+                function csrfSafeMethod(method) {
+                    // these HTTP methods do not require CSRF protection
+                    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                }
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                // 删除草稿
+                var post_id;
+                $('div.draft .dropdown-item').click(function() {
+                    post_id=this.id;
+                });
+                $("#deleteDraftBtn").click(function(){
+                    alert(post_id);
+                    $.ajax({
+                        url: "/post/delete/",
+                        data: {
+                            'pk': post_id,
+                            'csrf_token': csrftoken
+                        },
+                        type: 'POST',
+                        cache: false,
+                        success: function(result){
+                              location.reload();
+                        },
+                        error: function (result) {
+                            alert(result.responseText);
+                        },
+                    });
+                });
+            });
+        </script>
+
+    </body>
+</html>
